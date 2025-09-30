@@ -67,12 +67,10 @@ CREATE TABLE messages (
 
 -- Insert default admin user
 INSERT INTO users (username, email, password, full_name, role) 
-VALUES ('admin', 'admin@writingplatform.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Platform Administrator', 'admin');
+VALUES ('admin', 'admin@writingplatform.com', '$2y$10$e8EQi7Flu8HTmYf0nXPE.eqDK16zzZqW43ikrhGFitcMhXp1KVFOi', 'Platform Administrator', 'admin');
 
 -- Insert default post groups
-INSERT INTO post_groups (name, description) VALUES 
-('Poem', 'Collection of beautiful poems'),
-('Story', 'Engaging stories of all genres'),
-('Rhyme', 'Fun and rhythmic rhymes'),
-('Essay', 'Thought-provoking essays'),
-('Article', 'Informative articles on various topics');
+-- INSERT INTO post_groups (name, description) VALUES 
+-- ('কবিতা', '..'),
+
+

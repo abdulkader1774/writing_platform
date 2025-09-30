@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ball Rising Simulation</title>
+<style>
+:root{
+  --sky1: #87CEEB;
+  --sky2: #e6f7ff;
+  --ground: #2f8f2f;
+  --panel: rgba(255,255,255,0.95);
+  --accent: #ff4d4d;
+}
+html,body{height:100%;margin:0;font-family:"Noto Sans", Roboto, Arial, sans-serif; background: linear-gradient(to top, var(--sky1), var(--sky2)); overflow:hidden}
+.controls {
+  position:absolute; left:50%; transform:translateX(-50%); top:12px;
+  background:var(--panel); padding:10px 14px; border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12); display:flex; gap:10px; align-items:center; z-index:60;
+  flex-wrap:wrap;
+}
+.controls label{font-size:14px;color:#222}
+.controls input{width:90px;padding:6px;border-radius:6px;border:1px solid #ddd;font-size:14px}
+.controls button{background:var(--accent);color:#fff;padding:8px 12px;border:0;border-radius:8px;cursor:pointer;font-weight:600}
+.telemetry {
+  position:absolute; left:12px; bottom:12px; background:rgba(255,255,255,0.92);
+  padding:10px 12px;border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,0.08); z-index:60;
+  font-size:14px; min-width:200px;
+}
+.telemetry div{margin:6px 0;display:flex;justify-content:space-between; gap:8px}
+.stage {position:relative;width:100%;height:100%;overflow:hidden}
+.earth {
+  position:absolute; left:0; right:0; bottom:0; height:100px; background:var(--ground);
+  box-shadow: inset 0 10px 30px rgba(0,0,0,0.12);
+  display:flex; align-items:flex-end; justify-content:center; color:#f6ffd6; font-weight:700;
+  z-index:20;
+}
+#ball {
+  position:absolute; width:48px; height:48px; border-radius:50%;
+  background:var(--accent); left:50%; transform:translateX(-50%);
+  box-shadow:0 8px 18px rgba(0,0,0,0.2); z-index:30;
+}
+#hand {
+  position:absolute; bottom:100px; left:50%; transform:translateX(-50%);
+  width:80px; height:80px; 
+  background:url('https://i.imgur.com/1Xq0rGh.png') no-repeat center/contain;
+  z-index:25;
+}
+@media (max-width:640px){
+  .controls{left:8px;transform:none;top:8px}
+  .telemetry{left:8px;bottom:8px}
+}
+</style>
+</head>
+<body>
+<div class="controls">
+  <label>Height h (m): <input id="height" type="number" min="0" step="0.1" value="30"></label>
+  <label>Mass m (kg): <input id="mass" type="number" min="0.01" step="0.01" value="2"></label>
+  <button id="startBtn">Start</button>
+  <button id="resetBtn" disabled>Reset</button>
+</div>
+
+<div class="telemetry">
+  <div><span>Time (s)</span><strong id="time">0.00</strong></div>
+  <div><span>Height (m)</span><strong id="curH">0.00</strong></div>
+</div>
+
+<div class="stage">
+  <div id="hand"></div>
+  <div id="ball"></div>
+  <div class="earth">GROUND</div>
+</div>
+
+<script>
+const g = 9.81;
+const heightInput = document.getElementById('height');
+const massInput = document.getElementById('mass');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const timeEl = document.getElementById('time');
+const curHEl = document.getElementById('curH');
+const ball = document.getElementById('ball');
+const earth = document.querySelector('.earth');
+
+let sim = { running:false, t0:0, v:0, targetH:0, scale:4, rafId:null };
+
+function computeScale(targetH){
+  const earthH = earth.clientHeight;
+  const availablePx = window.innerHeight - earthH - 80; 
+  sim.scale = availablePx / (targetH * 1.2);
+}
+
+function metersToBottomPx(h_m){
+  const earthH = earth.clientHeight;
+  return earthH + h_m * sim.scale;
+}
+
+function updateTelemetry(t,h){
+  timeEl.textContent = t.toFixed(2);
+  curHEl.textContent = h.toFixed(2);
+}
+
+function placeBallAtHand(){
+  const handBottom = earth.clientHeight + 80;
+  ball.style.bottom = handBottom + 'px';
+  ball.style.left = '50%';
+  ball.style.transform = 'translateX(-50%)';
+  ball.style.opacity = 1;
+}
+
+function startSim(){
+  if(sim.running) return;
+  const h = Math.max(0, parseFloat(heightInput.value)||0);
+  const m = Math.max(0.01, parseFloat(massInput.value)||1);
+  sim.targetH = h;
+  sim.v = m * g * h / 5; // speed proportional to m*h
+  computeScale(h);
+  sim.running = true;
+  sim.t0 = performance.now()/1000;
+  startBtn.disabled = true;
+  resetBtn.disabled = false;
+  sim.rafId = requestAnimationFrame(frame);
+}
+
+function resetSim(){
+  sim.running = false;
+  cancelAnimationFrame(sim.rafId);
+  startBtn.disabled = false;
+  resetBtn.disabled = true;
+  updateTelemetry(0,0);
+  placeBallAtHand();
+}
+
+function frame(timestamp){
+  if(!sim.running) return;
+  const now = timestamp/1000;
+  let bottomPx = parseFloat(ball.style.bottom) || (earth.clientHeight + 80);
+  const step = sim.v * 0.016; // 60fps
+  bottomPx += step;
+  const targetPx = metersToBottomPx(sim.targetH);
+  if(bottomPx >= targetPx){
+    ball.style.bottom = targetPx + 'px';
+    sim.running = false; // stop at top
+    updateTelemetry(now - sim.t0, sim.targetH);
+    return;
+  }
+  ball.style.bottom = bottomPx + 'px';
+  updateTelemetry(now - sim.t0, (bottomPx - earth.clientHeight)/sim.scale);
+  sim.rafId = requestAnimationFrame(frame);
+}
+
+window.addEventListener('resize', ()=>{ if(!sim.running) computeScale(Math.max(parseFloat(heightInput.value)||10,10)); placeBallAtHand(); });
+startBtn.addEventListener('click', startSim);
+resetBtn.addEventListener('click', resetSim);
+
+placeBallAtHand();
+</script>
+</body>
+</html>
