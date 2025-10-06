@@ -69,14 +69,14 @@ $pageTitle = "Home - Writing Platform";
     <?php include 'navbar.php'; ?>
 
     <!-- Hero Section with Featured Image -->
-    <div class="hero-section">
+    <!-- <div class="hero-section">
         <div class="container">
             <h1>Share Your Stories With The World</h1>
             <p>Join our community of writers and readers. Discover amazing content or share your own creations.</p>
             <a href="create-account.php" class="btn btn-primary btn-lg me-2">Get Started</a>
             <a href="#latest-writings" class="btn btn-outline-light btn-lg">Explore Writings</a>
         </div>
-    </div>
+    </div> -->
 
     <div class="container mt-4">
         <div class="row">
