@@ -288,7 +288,7 @@ $pageTitle = $post['title'] . " - Writing Platform";
                     </ol>
                 </nav>
 
-                <article>
+                <article class="container col-sm-10 card " >
                     <header class="post-header">
                         <h1 class="post-title"><?php echo $post['title']; ?></h1>
 
@@ -308,8 +308,8 @@ $pageTitle = $post['title'] . " - Writing Platform";
                         </div>
 
                         <?php if ($post['thumbnail']): ?>
-                        <img src="<?php echo $post['thumbnail']; ?>" class="img-fluid post-thumbnail"
-                            alt="<?php echo $post['title']; ?>">
+                        <img src="<?php echo $post['thumbnail']; ?>" class="img-fluid post-thumbnail rounded mx-auto d-block"
+                            alt="<?php echo $post['title']; ?> Responsive image">
                         <?php endif; ?>
                     </header>
 
@@ -318,7 +318,14 @@ $pageTitle = $post['title'] . " - Writing Platform";
                     </div>
                 </article>
 
-                <!-- Related Posts Section -->
+                
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="container-fluid">
+        <!-- Related Posts Section -->
                 <?php if (count($nextPosts) > 0): ?>
                 <section class="related-posts">
                     <h3 class="related-title">More from <?php echo $post['group_name']; ?></h3>
@@ -388,8 +395,6 @@ $pageTitle = $post['title'] . " - Writing Platform";
                         <?php endif; ?>
                     </div>
                 </section>
-            </div>
-        </div>
     </div>
 
     <?php include 'footer.php'; ?>

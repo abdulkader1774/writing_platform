@@ -11,7 +11,7 @@ $success = '';
 $post = null;
 
 // Get post ID from URL
-$post_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$post_id = isset($_GET['edit']) ? intval($_GET['edit']) : 0;
 
 if ($post_id === 0) {
     header("Location: post-list.php");

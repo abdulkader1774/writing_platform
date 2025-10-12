@@ -122,7 +122,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <a href="../view.php?id=<?php echo $post['id']; ?>" class="btn btn-info" title="View">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-warning" title="Edit">
+                                                <a href="edit-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-warning" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a href="post-list.php?toggle=<?php echo $post['id']; ?>" class="btn btn-secondary" title="<?php echo $post['is_published'] ? 'Unpublish' : 'Publish'; ?>">

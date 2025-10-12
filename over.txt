@@ -156,3 +156,92 @@ $pageTitle = "Home - Writing Platform";
     <?php include 'footer.php'; ?>
 </body>
 </html>
+
+
+
+/// Navigation
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="index.php">Writing Platform</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php">Home</a>
+                </li>
+                <?php
+                // Fetch all groups for the navbar
+                if (isset($pdo)) {
+                    $stmt = $pdo->prepare("SELECT * FROM post_groups ORDER BY name");
+                    $stmt->execute();
+                    $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    foreach ($groups as $group) {
+                        echo '<li class="nav-item">
+                                <a class="nav-link" href="group.php?id=' . $group['id'] . '">' . $group['name'] . '</a>
+                              </li>';
+                    }
+                }
+                ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="search.php">Search</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <?php if (isLoggedIn()): ?>
+                    <?php if (isAdmin()): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin/">Admin Panel</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="user/">Dashboard</a>
+                        </li>
+                    <?php endif; ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user/logout.php">Logout</a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="create-account.php">Create Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user-login.php">Login</a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+//footer : 
+
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Writing Platform</h5>
+                <p>A place for writers to share their creativity with the world.</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="index.php" class="text-light">Home</a></li>
+                    <li><a href="create-account.php" class="text-light">Join Us</a></li>
+                    <li><a href="search.php" class="text-light">Search</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Contact</h5>
+                <p>Email: info@writingplatform.com</p>
+            </div>
+        </div>
+        <hr class="bg-light">
+        <div class="text-center">
+            <p>&copy; <?php echo date('Y'); ?> Writing Platform. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
